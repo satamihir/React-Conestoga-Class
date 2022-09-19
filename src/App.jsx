@@ -1,15 +1,29 @@
 
 const Issuetable = (props) => {
-    const rowStyle = {border: "1px solid black"};
-    const issues = [
+    // const rowStyle = {border: "1px solid black"};
+    const tempIssues = [
         {Id: 5,
+        Owner: 'Mihir',
+        Created: new Date("2022-09-18"),
+        Due: new Date("2022-09-25"),
+        Status: "Assigned",
         Title: "This is fifth",
     },
     {Id: 6,
+        Owner: 'Legend Mihir',
+        Created: new Date("2022-09-25"),
+        Due: new Date("2022-09-20"),
+        Status: "Resolved",
         Title: "This is Sixth",
     }];
+
+    const [issues,setIssues] = React.useState([]);
+
+    setTimeout(() => {
+        setIssues(tempIssues);
+    },2000)
     const issueRows = issues.map(issue => (
-        <IssueRow rowStyle={rowStyle} Id={issue.Id} Title={issue.Title} />
+        <IssueRow key={issue.Id} Id={issue.Id} Title={issue.Title} Status={issue.Status} Owner={issue.Owner} />
     ))
     return (
         <div>
@@ -17,22 +31,24 @@ const Issuetable = (props) => {
             <table>
                 <thead>
                     <tr>
-                        <th style={{border: "1px solid black"}}>ID</th>
-                        <th style={rowStyle}>TITLE</th>
+                        <th>ID</th>
+                        <th >TITLE</th>
+                        <th>STATUS</th>
+                        <th>OWNER</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td style={rowStyle}>1</td>
-                        <td style={rowStyle}>This is First Issue</td>
+                        <td >1</td>
+                        <td >This is First Issue</td>
                     </tr>
                     <tr>
-                        <td style={rowStyle}>{props.Id}</td>
-                        <td style={rowStyle}>{props.Title}</td>
+                        <td >{props.Id}</td>
+                        <td >{props.Title}</td>
                     </tr>
 
-                     <IssueRow rowStyle={rowStyle} Id={3} Title ={"This is Third Issue"} />
+                     {/* <IssueRow Id={3} Title ={"This is Third Issue"}  Status={issue.Status} Owner={issue.Owner} /> */}
                      {issueRows}
                 </tbody>
             </table>
@@ -44,12 +60,12 @@ const Issuetable = (props) => {
 
 
 const IssueRow = (props) => {
-    const rowStyle = {border: "1px solid black"};
-
     return (
                 <tr>
-                    <td style={rowStyle}>{props.Id}</td>
-                    <td style={rowStyle}>{props.Title}</td>
+                    <td>{props.Id}</td>
+                    <td>{props.Title}</td>
+                    <td>{props.Status}</td>
+                    <td>{props.Owner}</td>
                 </tr>
     )
 }
