@@ -17,6 +17,7 @@ const IssueRow=(props)=>
       <td>{props.Id}</td>
       <td>{props.Status}</td>      
       <td>{props.Owner}</td>
+      <td>{props.Effort}</td>
       <td>{props.Cerated}</td>
       <td>{props.Due}</td>
       <td>{props.Title}</td>
@@ -65,7 +66,7 @@ const IssueRow=(props)=>
 */
 
 
- const issueRows = issues.map(issue =>(  <IssueRow key={issue.Id} rowstyle={rowstyle} Id={issue.Id} Status={issue.Status} Owner={issue.Owner} Cerated={issue.Cerated.toDateString()} Due={issue.Due.toDateString()} Title={issue.Title}/>)
+ const issueRows = issues.map(issue =>(  <IssueRow key={issue.Id} rowstyle={rowstyle} Id={issue.Id} Status={issue.Status} Owner={issue.Owner} Effort={issue.Effort} Cerated={issue.Cerated.toDateString()} Due={issue.Due.toDateString()} Title={issue.Title}/>)
   )
     return (
       <>
@@ -95,6 +96,7 @@ const IssueRow=(props)=>
               <th>Id</th>
               <th>Status</th>
               <th>Owner</th>
+              <th>Effort</th>
               <th>Created</th>
               <th>Due</th>
               <th>Title</th>
@@ -109,21 +111,59 @@ const IssueRow=(props)=>
   };
   
   const AddIssue = ({AddSingleIssue}) => {
-    const newIssue ={Status:"Assigned",Owner:"Person-B",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-18"), Title:"This is sixth issue"}; 
+    // const newIssue ={Status:"Assigned",Owner:"Person-B",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-18"), Title:"This is sixth issue"}; 
    
-    React.useEffect(()=>{
-      setTimeout(() => {
-        AddSingleIssue(newIssue);  
-      }, 1000);
-    },[]);
-    return (<h1>Add Issue</h1>)
+    // React.useEffect(()=>{
+    //   setTimeout(() => {
+    //     AddSingleIssue(newIssue);  
+    //   }, 1000);
+    // },[]);
+
+    function handleSubmit(e) {
+        e.preventDefault();
+        let form = document.forms.addForm;
+        console.log(form);
+        let newIssue = {
+            Status: form.Status.value,
+            Owner: form.Owner.value,
+            Effort: form.Effort.value,
+            Cerated: new Date(form.Cerated.value),
+            Due: new Date(form.Due.value),
+            Title: form.Title.value,
+
+        }
+
+        AddSingleIssue(newIssue);
+        console.log('hello',newIssue);
+        form.reset();
+
+    }
+
+    return (
+    <div>
+        <h1>Add Issue</h1>
+        <form name="addForm" onSubmit={handleSubmit}>
+            <input type="text" name="Status" placeholder="Status" />
+            <input type="text" name="Owner" placeholder="Owner" />
+            <input type="text" name="Effort" placeholder="Effort" />
+            <input type="text" name="Cerated" placeholder="Cerated" />
+            <input type="text" name="Due" placeholder="Due" />
+            <input type="text" name="Title" placeholder="Title" />
+            <br />
+            <br />
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    
+    )
   };
   
   const IssueList = () => {
   
   const tempIssues=[
-      {Id: 1,Status:"Assigned",Owner:"Person-A",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-25"), Title:"This is fifth issue"},
-      {Id: 2,Status:"Resolved",Owner:"Person-B",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-18"), Title:"This is sixth issue"}]; 
+      {Id: 1,Status:"Assigned",Owner:"Person-A", Effort: "10",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-25"), Title:"This is fifth issue"},
+      {Id: 2,Status:"Resolved",Owner:"Person-B",Effort: "10",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-18"), Title:"This is sixth issue"}]; 
   
   const [issues,setIssues]= React.useState(tempIssues);
 
