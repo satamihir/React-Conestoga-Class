@@ -20,7 +20,7 @@ const IssueRow=(props)=>
       <td>{props.Status}</td>      
       <td>{props.Owner}</td>
       <td>{props.Effort}</td>
-      <td>{props.Cerated}</td>
+      <td>{props.Created}</td>
       <td>{props.Due}</td>
       <td>{props.Title}</td>
     </tr>
@@ -68,7 +68,7 @@ const IssueRow=(props)=>
 */
 
 
- const issueRows = issues.map(issue =>(  <IssueRow key={issue.Id} rowstyle={rowstyle} Id={issue.Id} Status={issue.Status} Owner={issue.Owner} Effort={issue.Effort} Cerated={issue.Cerated.toDateString()} Due={issue.Due.toDateString()} Title={issue.Title}/>)
+ const issueRows = issues.map(issue =>(  <IssueRow rowstyle={rowstyle} Id={issue.Id} Status={issue.Status} Owner={issue.Owner} Effort={issue.Effort} Created={issue.Created.toString()} Due={issue.Due.toString()} Title={issue.Title}/>)
   )
     return (
       <>
@@ -129,7 +129,7 @@ const IssueRow=(props)=>
             Status: form.Status.value,
             Owner: form.Owner.value,
             Effort: form.Effort.value,
-            Cerated: new Date(form.Cerated.value),
+            Created: new Date(form.Created.value),
             Due: new Date(form.Due.value),
             Title: form.Title.value,
 
@@ -148,7 +148,7 @@ const IssueRow=(props)=>
             <input type="text" name="Status" placeholder="Status" />
             <input type="text" name="Owner" placeholder="Owner" />
             <input type="text" name="Effort" placeholder="Effort" />
-            <input type="text" name="Cerated" placeholder="Cerated" />
+            <input type="text" name="Created" placeholder="Created" />
             <input type="text" name="Due" placeholder="Due" />
             <input type="text" name="Title" placeholder="Title" />
             <br />
@@ -163,11 +163,37 @@ const IssueRow=(props)=>
   
   const IssueList = () => {
   
-  const tempIssues=[
-      {Id: 1,Status:"Assigned",Owner:"Person-A", Effort: "10",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-25"), Title:"This is fifth issue"},
-      {Id: 2,Status:"Resolved",Owner:"Person-B",Effort: "10",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-18"), Title:"This is sixth issue"}]; 
+  // const tempIssues=[
+  //     {Id: 1,Status:"Assigned",Owner:"Person-A", Effort: "10",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-25"), Title:"This is fifth issue"},
+  //     {Id: 2,Status:"Resolved",Owner:"Person-B",Effort: "10",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-18"), Title:"This is sixth issue"}]; 
   
-  const [issues,setIssues]= React.useState(tempIssues);
+  const [issues,setIssues]= React.useState([]);
+
+  const query = `
+  query {
+    issueList {
+      Id
+      Status
+      Owner
+      Effort
+      Created
+      Due
+      Title
+    }
+  }
+  `
+
+  React.useEffect(() => {
+    fetch('/graphql',{
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({query})
+    }).then(async function(response){
+      let issueData = await response.json();
+      setIssues(issueData.data.issueList);
+      console.log('hello',issueData);
+    })
+  },[])
 
   const AddSingleIssue =(newIssue) =>{
     newIssue.Id =issues.length + 1;

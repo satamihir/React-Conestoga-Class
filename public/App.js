@@ -11,7 +11,7 @@ const IssueFilter = () => {
 
 const IssueRow = props => {
   // const rowstyle ={ border:"1px solixd"};
-  return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, props.Id), /*#__PURE__*/React.createElement("td", null, props.Status), /*#__PURE__*/React.createElement("td", null, props.Owner), /*#__PURE__*/React.createElement("td", null, props.Effort), /*#__PURE__*/React.createElement("td", null, props.Cerated), /*#__PURE__*/React.createElement("td", null, props.Due), /*#__PURE__*/React.createElement("td", null, props.Title));
+  return /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, props.Id), /*#__PURE__*/React.createElement("td", null, props.Status), /*#__PURE__*/React.createElement("td", null, props.Owner), /*#__PURE__*/React.createElement("td", null, props.Effort), /*#__PURE__*/React.createElement("td", null, props.Created), /*#__PURE__*/React.createElement("td", null, props.Due), /*#__PURE__*/React.createElement("td", null, props.Title));
 };
 
 const IssueTable = ({
@@ -50,14 +50,13 @@ const IssueTable = ({
   */
 
   const issueRows = issues.map(issue => /*#__PURE__*/React.createElement(IssueRow, {
-    key: issue.Id,
     rowstyle: rowstyle,
     Id: issue.Id,
     Status: issue.Status,
     Owner: issue.Owner,
     Effort: issue.Effort,
-    Cerated: issue.Cerated.toDateString(),
-    Due: issue.Due.toDateString(),
+    Created: issue.Created.toString(),
+    Due: issue.Due.toString(),
     Title: issue.Title
   }));
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("h1", null, "Issue Table"), /*#__PURE__*/React.createElement("table", null, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "Id"), /*#__PURE__*/React.createElement("th", null, "Status"), /*#__PURE__*/React.createElement("th", null, "Owner"), /*#__PURE__*/React.createElement("th", null, "Effort"), /*#__PURE__*/React.createElement("th", null, "Created"), /*#__PURE__*/React.createElement("th", null, "Due"), /*#__PURE__*/React.createElement("th", null, "Title"))), /*#__PURE__*/React.createElement("tbody", null, issueRows)));
@@ -80,7 +79,7 @@ const AddIssue = ({
       Status: form.Status.value,
       Owner: form.Owner.value,
       Effort: form.Effort.value,
-      Cerated: new Date(form.Cerated.value),
+      Created: new Date(form.Created.value),
       Due: new Date(form.Due.value),
       Title: form.Title.value
     };
@@ -106,8 +105,8 @@ const AddIssue = ({
     placeholder: "Effort"
   }), /*#__PURE__*/React.createElement("input", {
     type: "text",
-    name: "Cerated",
-    placeholder: "Cerated"
+    name: "Created",
+    placeholder: "Created"
   }), /*#__PURE__*/React.createElement("input", {
     type: "text",
     name: "Due",
@@ -122,24 +121,38 @@ const AddIssue = ({
 };
 
 const IssueList = () => {
-  const tempIssues = [{
-    Id: 1,
-    Status: "Assigned",
-    Owner: "Person-A",
-    Effort: "10",
-    Cerated: new Date("2022-09-18"),
-    Due: new Date("2022-09-25"),
-    Title: "This is fifth issue"
-  }, {
-    Id: 2,
-    Status: "Resolved",
-    Owner: "Person-B",
-    Effort: "10",
-    Cerated: new Date("2022-09-18"),
-    Due: new Date("2022-09-18"),
-    Title: "This is sixth issue"
-  }];
-  const [issues, setIssues] = React.useState(tempIssues);
+  // const tempIssues=[
+  //     {Id: 1,Status:"Assigned",Owner:"Person-A", Effort: "10",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-25"), Title:"This is fifth issue"},
+  //     {Id: 2,Status:"Resolved",Owner:"Person-B",Effort: "10",Cerated: new Date("2022-09-18"),Due: new Date("2022-09-18"), Title:"This is sixth issue"}]; 
+  const [issues, setIssues] = React.useState([]);
+  const query = `
+  query {
+    issueList {
+      Id
+      Status
+      Owner
+      Effort
+      Created
+      Due
+      Title
+    }
+  }
+  `;
+  React.useEffect(() => {
+    fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query
+      })
+    }).then(async function (response) {
+      let issueData = await response.json();
+      setIssues(issueData.data.issueList);
+      console.log('hello', issueData);
+    });
+  }, []);
 
   const AddSingleIssue = newIssue => {
     newIssue.Id = issues.length + 1;
