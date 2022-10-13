@@ -6,14 +6,19 @@ const tempIssues=[
     {Id: 2,Status:"Resolved",Owner:"Person-B",Effort: "10",Created: new Date("2022-09-18"),Due: new Date("2022-09-18"), Title:"This is sixth issue"}]; 
 
 
-  Issue.insertMany(tempIssues)
-    .then(function(data){
-        console.log("Data", data)
+//   Issue.insertMany(tempIssues)
+//     .then(function(data){
+//         console.log("Data", data)
+// })
+
+const query = Issue.find({});
+query.count(function(err,count){
+    console.log(count);
 })
 
-Issue.find({})
-        .then(function(data) {
-            console.log(data);
-        })
+// Issue.find({})
+//         .then(function(data) {
+//             console.log(data);
+//         })
 
 

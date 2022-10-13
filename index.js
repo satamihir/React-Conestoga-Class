@@ -7,7 +7,18 @@ const Issue = require('./models/issues');
 /* This is Graph QL Code */
 const {ApolloServer} = require('apollo-server-express');
 
-const typeDefs = `type issue {
+
+const typeDefs = 
+`
+input inputIssue {
+    Status: String!
+    Owner: String
+    Effort: Int
+    Title: String
+}
+
+
+type issue {
     Id: String!
     Status: String!
     Owner: String
@@ -23,6 +34,7 @@ type Query {
 }
 type Mutation {
     setAboutMesssage(message: String!): String
+    addSingleIssue(issue: inputIssue): issue
 }`;
 
 let aboutMessage = "Hello I am just a variable";
@@ -37,6 +49,7 @@ const resolvers = {
     },
     Mutation: {
         setAboutMesssage,
+        addSingleIssue
     },
 };
 
@@ -48,6 +61,21 @@ async function issueList() {
 
 function setAboutMesssage(_,{message}) {
     return aboutMessage = message;
+}
+
+async function addSingleIssue(_,{issue}) {
+    const query = Issue.find({});
+    query.count(function(err,count){
+        issue.Id = count + 1;
+        issue.Created = new Date();
+        issue.Due = new Date();
+
+        Issue.create(issue);
+        console.log(issue);
+        return issue;
+    })
+    
+    
 }
 
 const server = new ApolloServer({

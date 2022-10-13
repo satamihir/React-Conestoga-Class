@@ -78,9 +78,9 @@ const AddIssue = ({
     let newIssue = {
       Status: form.Status.value,
       Owner: form.Owner.value,
-      Effort: form.Effort.value,
-      Created: new Date(form.Created.value),
-      Due: new Date(form.Due.value),
+      Effort: parseInt(form.Effort.value),
+      // Created: new Date(form.Created.value),
+      // Due: new Date(form.Due.value),
       Title: form.Title.value
     };
     AddSingleIssue(newIssue);
@@ -103,14 +103,6 @@ const AddIssue = ({
     type: "text",
     name: "Effort",
     placeholder: "Effort"
-  }), /*#__PURE__*/React.createElement("input", {
-    type: "text",
-    name: "Created",
-    placeholder: "Created"
-  }), /*#__PURE__*/React.createElement("input", {
-    type: "text",
-    name: "Due",
-    placeholder: "Due"
   }), /*#__PURE__*/React.createElement("input", {
     type: "text",
     name: "Title",
@@ -155,10 +147,37 @@ const IssueList = () => {
   }, []);
 
   const AddSingleIssue = newIssue => {
+    let singleIssue = {};
+    singleIssue.issue = newIssue;
+    console.log(singleIssue);
     newIssue.Id = issues.length + 1;
-    let IssueList = issues.slice();
-    IssueList.push(newIssue);
-    setIssues(IssueList);
+    const query = `
+    mutation ($issue: inputIssue){
+      addSingleIssue(issue: $issue) {
+        Id
+        Status
+        Owner
+        Effort
+        Created
+        Due
+        Title
+      }
+    }`;
+    fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query,
+        newIssue
+      })
+    }).then(async function (response) {
+      let data = await response.json();
+      console.log(data);
+    }); // let IssueList = issues.slice();
+    // IssueList.push(newIssue);
+    // setIssues(IssueList);
   };
 
   return /*#__PURE__*/React.createElement("div", {

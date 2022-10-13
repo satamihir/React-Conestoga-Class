@@ -128,9 +128,9 @@ const IssueRow=(props)=>
         let newIssue = {
             Status: form.Status.value,
             Owner: form.Owner.value,
-            Effort: form.Effort.value,
-            Created: new Date(form.Created.value),
-            Due: new Date(form.Due.value),
+            Effort: parseInt(form.Effort.value),
+            // Created: new Date(form.Created.value),
+            // Due: new Date(form.Due.value),
             Title: form.Title.value,
 
         }
@@ -148,16 +148,14 @@ const IssueRow=(props)=>
             <input type="text" name="Status" placeholder="Status" />
             <input type="text" name="Owner" placeholder="Owner" />
             <input type="text" name="Effort" placeholder="Effort" />
-            <input type="text" name="Created" placeholder="Created" />
-            <input type="text" name="Due" placeholder="Due" />
+            {/* <input type="text" name="Created" placeholder="Created" />
+            <input type="text" name="Due" placeholder="Due" /> */}
             <input type="text" name="Title" placeholder="Title" />
             <br />
             <br />
             <button type="submit">Submit</button>
         </form>
     </div>
-
-    
     )
   };
   
@@ -196,10 +194,37 @@ const IssueRow=(props)=>
   },[])
 
   const AddSingleIssue =(newIssue) =>{
+    let singleIssue = {};
+    singleIssue.issue = newIssue;
+    console.log(singleIssue);
     newIssue.Id =issues.length + 1;
-    let IssueList = issues.slice();
-    IssueList.push(newIssue);
-    setIssues(IssueList);
+
+    const query = `
+    mutation ($issue: inputIssue){
+      addSingleIssue(issue: $issue) {
+        Id
+        Status
+        Owner
+        Effort
+        Created
+        Due
+        Title
+      }
+    }`;
+
+    fetch('/graphql',{
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({query, newIssue  })
+    }).then(async function(response){
+      let data = await response.json();
+      console.log(data);
+    })
+
+
+    // let IssueList = issues.slice();
+    // IssueList.push(newIssue);
+    // setIssues(IssueList);
   }
 
     return (    
